@@ -190,7 +190,7 @@
             grid-column: 1;
         }
 
-        .grid-item-2 {
+        .grid-item-2 {  
             grid-column: 2 / span 2;
         }
 
@@ -203,51 +203,65 @@
             grid-row: 2;
         }
 
-        .long-horizontal-bar {
-            height: 300px;
-            background-color: #E0E0E0;
-            margin-top: 50px;
-            margin-bottom: 50px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .long-horizontal-bar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .overlay-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        /* Footer Styles */
+        .footer {
+            background-color: #1E1E1E;
             color: white;
-            text-align: center;
-            z-index: 10;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            padding: 40px 0 20px;
         }
-        
-        .overlay-text h2 {
-            font-size: 2.5rem;
+
+        .footer .logo-text {
+            font-size: 1.5rem;
             font-weight: bold;
+        }
+
+        .footer-text p {
             margin-bottom: 10px;
         }
-        
-        .overlay-text p {
-            font-size: 1.2rem;
-            max-width: 80%;
-            margin: 0 auto;
+
+        .footer h5 {
+            font-weight: bold;
+            margin-bottom: 20px;
         }
-        
-        .dark-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.4);
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #333;
+            color: white;
+            margin-right: 10px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .social-icon:hover {
+            background-color: #555;
+            color: white;
+        }
+
+        .social-icon.facebook:hover {
+            background-color: #3b5998;
+        }
+
+        .social-icon.instagram:hover {
+            background-color: #e1306c;
+        }
+
+        .social-icon i {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 767px) {
+            .footer .text-md-start,
+            .footer .text-md-end,
+            .footer .justify-content-md-start {
+                text-align: center !important;
+                justify-content: center !important;
+            }
         }
     </style>
 </head>
@@ -271,7 +285,7 @@
                         <a class="nav-link" href="Products.php">PRODUCTS</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="Commissioned.php">COMMISSIONED DESIGNS</a>
+                        <a class="nav-link" href="Inquiry.php">INQUIRY</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -447,18 +461,42 @@
         </div>
     </div>
 
-    <!-- Long Horizontal Bar with Image -->
-    <div class="container-fluid">
-        <div class="long-horizontal-bar">
-            <div class="dark-overlay"></div>
-            <img src="images/Create/commission design.jpg" alt="Design Workshop">
-            <div class="overlay-text">
-                <h2>Custom Design Services</h2>
-                <p>Let our expert designers bring your vision to life with our premium custom design services</p>
-                <a href="Commissioned.php" class="btn btn-light mt-3">Learn More</a>
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-3">
+                        <img id="footerLogo" src="/api/placeholder/75/75" class="me-2 rounded-circle">
+                        <span class="logo-text">Metro District Design</span>
+                    </div>
+                    <div class="footer-text text-center text-md-start">
+                        <p><i class="bi bi-geo-alt me-2"></i><a href="" target="_blank" style="color: white; text-decoration: none;">Parañaque, Philippines</a></p>
+                        <p><i class="bi bi-envelope me-2"></i><a href="" style="color: white; text-decoration: none;">metrodistrictd@gmail.com</a></p>
+                        <p><i class="bi bi-telephone me-2"></i><a href="" style="color: white; text-decoration: none;"></a> 0968 597 9776<a href="4" style="color: white; text-decoration: none;"></a></p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                <div class="container">
+                        <div class="row">
+                            <div class="col-md-6 mb-4 mb-md-0">
+                                <h5>Follow Us</h5>
+                                <a href="https://www.facebook.com/MetroDistrictDesigns" class="social-icon facebook">
+                                    <i class="bi bi-facebook"></i>
+                                </a>
+                                <a href="https://www.instagram.com/metrodistrict_ig/" class="social-icon instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="text-center text-md-end mt-4">
+                        <p>© 2025 Metro District Design. All rights reserved.</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </footer>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
