@@ -1,18 +1,16 @@
-    <?php
-    session_start();
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "metrodistrictdesigns";
+<?php
+session_start();
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "metrodistrictdesigns";
 
-    $conn = new mysqli($host, $username, $password, $database);
+$conn = new mysqli($host, $username, $password, $database);
 
-    if ($conn->connect_error){
-        die("Connection failed: " . $conn->connect_error);
-    }
-    ?>
-
-
+if ($conn->connect_error){
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -75,6 +73,23 @@
             border: none;
             box-sizing: border-box;
         }
+        .signup-form .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 0;
+        }
+        .signup-form .form-row .form-group {
+            flex: 1;
+        }
+        .signup-form textarea {
+            width: 100%;
+            margin-bottom: 25px;
+            padding: 8px;
+            border: none;
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 80px;
+        }
         .signup-form button {
             width: 100%;
             padding: 10px;
@@ -85,6 +100,16 @@
         }
         .error-message {
             color: red;
+            margin-bottom: 15px;
+        }
+        .login-link {
+            margin-bottom: 15px;
+        }
+        .input-help-text {
+            font-size: 12px;
+            color: #333;
+            text-align: left;
+            margin-top: -20px;
             margin-bottom: 15px;
         }
     </style>
@@ -129,15 +154,65 @@
         ?>
 
         <form class="signup-form" action="register.php" method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="text" name="first_name" placeholder="First Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="last_name" placeholder="Last Name" required>
+                </div>
+            </div>
             <input type="text" name="username" placeholder="Username" required>
+            <input type="tel" name="contact_number" id="contact_number" placeholder="Contact Number (e.g., 09123456789)" pattern="^(09|\+639)\d{9}$" maxlength="11" required>
+            <div class="input-help-text">Enter a Philippine mobile number (e.g., 09123456789)</div>
             <input type="email" name="email" placeholder="Email" required>
+            <textarea name="address" placeholder="Full Address" required></textarea>
+            <input type="number" name="postal_code" id="postal_code" placeholder="Postal Code" pattern="[0-9]*" inputmode="numeric" minlength="4" maxlength="4" required>
+            <div class="input-help-text">Enter a 4-digit Philippine postal code</div>
             <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
             <div class="login-link">
                 Already have an account? <a href="Login.php">Log In</a>
             </div>
             <button type="submit">Sign Up</button>
         </form>
     </div>
+
+    <!-- Client-side validation for phone number and postal code -->
+    <script>
+        // Ensure postal code only accepts numbers and is limited to 4 digits (Philippine standard)
+        document.querySelector('#postal_code').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 4) {
+                this.value = this.value.slice(0, 4);
+            }
+        });
+
+        // Ensure phone number follows Philippine format
+        document.querySelector('#contact_number').addEventListener('input', function(e) {
+            // Remove non-digits
+            this.value = this.value.replace(/[^0-9+]/g, '');
+            
+            // Ensure it follows Philippine format
+            if (this.value.startsWith('+63')) {
+                if (this.value.length > 12) {
+                    this.value = this.value.slice(0, 12);
+                }
+            } else if (this.value.startsWith('09')) {
+                if (this.value.length > 11) {
+                    this.value = this.value.slice(0, 11);
+                }
+            } else if (this.value.startsWith('0')) {
+                // Ensure it starts with '09'
+                if (this.value.length > 1 && this.value[1] !== '9') {
+                    this.value = '09' + this.value.slice(2);
+                }
+            } else if (this.value.length > 0 && !this.value.startsWith('+')) {
+                // If it doesn't start with '+' or '0', prepend '09'
+                this.value = '09' + this.value;
+            }
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

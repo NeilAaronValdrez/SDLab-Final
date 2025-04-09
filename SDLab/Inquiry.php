@@ -365,6 +365,40 @@
             display: none;
         }
 
+        /* Login required modal */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .login-modal-content h3 {
+            margin-top: 0;
+        }
+
+        .login-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
         /* Media queries for responsive design */
         @media (max-width: 768px) {
             .design-section {
@@ -404,11 +438,14 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item" id="signupNavItem">
                         <a class="nav-link" href="Signup.php">SIGN-UP</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="loginNavItem">
                         <a class="nav-link" href="Login.php">LOGIN</a>
+                    </li>
+                    <li class="nav-item" id="logoutNavItem" style="display: none;">
+                        <a class="nav-link" href="#" id="logoutLink">LOGOUT</a>
                     </li>
                     <li class="nav-item nav-icons">
                         <i class="bi bi-cart cart-icon" id="cartIcon"></i>
@@ -423,6 +460,19 @@
             </div>
         </div>
     </nav>
+
+    <!-- Login Required Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-modal-content">
+            <h3>Login Required</h3>
+            <p>Please log in or create an account to submit a design inquiry.</p>
+            <div class="login-modal-buttons">
+                <a href="Login.php" class="btn btn-primary">Login</a>
+                <a href="Signup.php" class="btn btn-secondary">Sign Up</a>
+                <button class="btn btn-outline-dark" id="cancelLoginBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="commissioned-hero">
@@ -666,6 +716,95 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // User authentication state
+            let isLoggedIn = false;
+            let userData = null;
+
+            // Check if user is logged in (in a real application, this would be done via server-side check)
+            function checkLoginStatus() {
+                // In a real app, you would check session or local storage
+                // For demo purposes, we'll check localStorage
+                const storedUser = localStorage.getItem('userInfo');
+                if (storedUser) {
+                    try {
+                        userData = JSON.parse(storedUser);
+                        isLoggedIn = true;
+                        
+                        // Update UI for logged in user
+                        document.getElementById('signupNavItem').style.display = 'none';
+                        document.getElementById('loginNavItem').style.display = 'none';
+                        document.getElementById('logoutNavItem').style.display = 'block';
+                        
+                        // Auto-fill form if user is logged in
+                        if (userData.name) document.getElementById('name').value = userData.name;
+                        if (userData.email) document.getElementById('email').value = userData.email;
+                        if (userData.phone) document.getElementById('phone').value = userData.phone;
+                    } catch (e) {
+                        console.error('Error parsing user data', e);
+                        localStorage.removeItem('userInfo');
+                    }
+                }
+            }
+
+            // Simulate login for demo purposes
+            function simulateLogin() {
+                // This is just for demo/testing - in a real app, this would be handled by server
+                const demoUser = {
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    phone: '0917 123 4567'
+                };
+                
+                localStorage.setItem('userInfo', JSON.stringify(demoUser));
+                checkLoginStatus();
+                
+                // Reload page to apply changes
+                window.location.reload();
+            }
+
+            // Simulate logout for demo purposes
+            function handleLogout() {
+                localStorage.removeItem('userInfo');
+                isLoggedIn = false;
+                userData = null;
+                
+                // Update UI for logged out user
+                document.getElementById('signupNavItem').style.display = 'block';
+                document.getElementById('loginNavItem').style.display = 'block';
+                document.getElementById('logoutNavItem').style.display = 'none';
+                
+                // Clear form
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                
+                alert('You have been logged out.');
+            }
+
+            // Check login status when page loads
+            checkLoginStatus();
+
+            // Logout event listener
+            document.getElementById('logoutLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                handleLogout();
+            });
+
+            // For demo purposes - add login functionality to login link
+            document.getElementById('loginNavItem').querySelector('a').addEventListener('click', function(e) {
+                e.preventDefault();
+                simulateLogin();
+            });
+
+            // Login modal elements
+            const loginModal = document.getElementById('loginModal');
+            const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+
+            // Close login modal
+            cancelLoginBtn.addEventListener('click', function() {
+                loginModal.style.display = 'none';
+            });
+
             // Tab navigation
             const tabs = document.querySelectorAll('.custom-tab');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -684,285 +823,232 @@
                     document.getElementById(tabId).classList.add('active');
                 });
             });
-            
-            // Current selections and states
-            const state = {
-                color: "white",
-                size: "M",
-                designSize: 100,
-                designPositionY: 0,
-                uploadedDesign: null
-            };
-            
-            // DOM elements
-            const elements = {
-                colorOptions: document.querySelectorAll('.color-option'),
-                sizeOptions: document.querySelectorAll('.size-option'),
-                fileInput: document.getElementById('design-upload'),
-                fileNameDisplay: document.getElementById('file-name'),
-                previewButton: document.getElementById('preview-button'),
-                downloadButton: document.getElementById('download-button'),
-                tshirtBodyLarge: document.getElementById('tshirt-body-large'),
-                tshirtBodySmall: document.getElementById('tshirt-body-small'),
-                designAreaLarge: document.getElementById('design-large'),
-                designAreaSmall: document.getElementById('design-small'),
-                designControls: document.getElementById('design-controls'),
-                sizeControl: document.getElementById('size-control'),
-                sizeValue: document.getElementById('size-value'),
-                positionYControl: document.getElementById('position-y-control'),
-                positionYValue: document.getElementById('position-y-value')
-            };
-            
-            // Initialize event listeners for design preview
-            if (elements.colorOptions) {
-                // Color options
-                elements.colorOptions.forEach(option => {
-                    option.addEventListener('click', () => {
-                        changeColor(option.getAttribute('data-color'));
-                    });
-                });
-                
-                // Size options
-                elements.sizeOptions.forEach(option => {
-                    option.addEventListener('click', () => {
-                        changeSize(option.getAttribute('data-size'));
-                    });
-                });
-                
-                // File input
-                elements.fileInput.addEventListener('change', function() {
-                    if (this.files && this.files[0]) {
-                        elements.fileNameDisplay.textContent = this.files[0].name;
-                    } else {
-                        elements.fileNameDisplay.textContent = "Choose File";
-                    }
-                });
-                
-                // Preview button
-                elements.previewButton.addEventListener('click', previewDesign);
-                
-                // Download button
-                elements.downloadButton.addEventListener('click', downloadDesign);
-                
-                // Design adjustment controls
-                elements.sizeControl.addEventListener('input', function() {
-                    state.designSize = this.value;
-                    elements.sizeValue.textContent = this.value;
-                    updateDesignDisplay();
-                });
-                
-                elements.positionYControl.addEventListener('input', function() {
-                    state.designPositionY = this.value;
-                    elements.positionYValue.textContent = this.value;
-                    updateDesignDisplay();
-                });
-            }
-            
-            // Change t-shirt color
-            function changeColor(color) {
-                // Update current color
-                state.color = color;
-                
-                // Update active color selection
-                elements.colorOptions.forEach(option => {
-                    option.classList.remove('active');
-                    if (option.getAttribute('data-color') === color) {
-                        option.classList.add('active');
-                    }
-                });
-                
-                // Update T-shirt colors
-                elements.tshirtBodyLarge.setAttribute('fill', color);
-                elements.tshirtBodySmall.setAttribute('fill', color);
-                
-                // Update text color in the design area if needed
-                if (color === 'black') {
-                    elements.designAreaLarge.style.color = 'white';
-                    elements.designAreaSmall.style.color = 'white';
-                } else {
-                    elements.designAreaLarge.style.color = '#1a75bb';
-                    elements.designAreaSmall.style.color = '#1a75bb';
-                }
-            }
-            
-            // Change t-shirt size
-            function changeSize(size) {
-                // Update current size
-                state.size = size;
-                
-                // Update active size selection
-                elements.sizeOptions.forEach(option => {
-                    option.classList.remove('active');
-                    if (option.getAttribute('data-size') === size) {
-                        option.classList.add('active');
-                    }
-                });
-            }
-            
-            // Preview the design
-        function previewDesign() {
-            if (elements.fileInput.files && elements.fileInput.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    // Store the uploaded design
-                    state.uploadedDesign = e.target.result;
-                    
-                    // Show design adjustment controls
-                    elements.designControls.style.display = 'block';
-                    
-                    // Reset adjustment values
-                    elements.sizeControl.value = 100;
-                    elements.positionYControl.value = 0;
-                    elements.sizeValue.textContent = '100';
-                    elements.positionYValue.textContent = '0';
-                    state.designSize = 100;
-                    state.designPositionY = 0;
-                    
-                    // Update the design display
-                    updateDesignDisplay();
-                };
-                
-                reader.readAsDataURL(elements.fileInput.files[0]);
-            } else {
-                alert('Please select an image file first.');
-            }
-        }
-        
-        // Update the design display based on current state
-        function updateDesignDisplay() {
-            if (state.uploadedDesign) {
-                // Create design image elements for both preview areas
-                const designLarge = createDesignImage(state.uploadedDesign);
-                const designSmall = createDesignImage(state.uploadedDesign);
-                
-                // Clear previous content
-                elements.designAreaLarge.innerHTML = '';
-                elements.designAreaSmall.innerHTML = '';
-                
-                // Apply size and position adjustments
-                applyDesignStyles(designLarge);
-                applyDesignStyles(designSmall);
-                
-                // Add images to design areas
-                elements.designAreaLarge.appendChild(designLarge);
-                elements.designAreaSmall.appendChild(designSmall);
-            }
-        }
-        
-        // Create an image element for the design
-        function createDesignImage(src) {
-            const img = document.createElement('img');
-            img.src = src;
-            img.className = 'uploaded-design';
-            return img;
-        }
-        
-        // Apply styles based on current adjustments
-        function applyDesignStyles(imgElement) {
-            const scale = state.designSize / 100;
-            imgElement.style.transform = `scale(${scale})`;
-            imgElement.style.marginTop = `${state.designPositionY}px`;
-            imgElement.style.maxWidth = '100%';
-            imgElement.style.maxHeight = '100%';
-        }
-        
-        // Download the design preview
-        function downloadDesign() {
-            if (!state.uploadedDesign) {
-                alert('Please upload and preview a design first.');
-                return;
-            }
-            
-            // Get the T-shirt container
-            const tshirtContainer = document.getElementById('large-preview');
-            
-            // Create a canvas for processing
-            const canvas = document.getElementById('processing-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Set canvas dimensions based on the container
-            const containerRect = tshirtContainer.getBoundingClientRect();
-            canvas.width = containerRect.width * 2; // Higher resolution
-            canvas.height = containerRect.height * 2; // Higher resolution
-            
-            // Create an SVG data URL
-            const svgData = new XMLSerializer().serializeToString(document.getElementById('tshirt-svg-large'));
-            const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
-            const DOMURL = window.URL || window.webkitURL || window;
-            const svgUrl = DOMURL.createObjectURL(svgBlob);
-            
-            // Create images
-            const tshirtImg = new Image();
-            const designImg = new Image();
-            
-            // Handle design image loading
-            designImg.onload = function() {
-                // Handle T-shirt image loading
-                tshirtImg.onload = function() {
-                    // Draw T-shirt on canvas
-                    ctx.drawImage(tshirtImg, 0, 0, canvas.width, canvas.height);
-                    
-                    // Calculate design position and dimensions
-                    const designAreaRect = elements.designAreaLarge.getBoundingClientRect();
-                    const scale = state.designSize / 100;
-                    const designX = (canvas.width / containerRect.width) * (designAreaRect.left - containerRect.left);
-                    const designY = (canvas.height / containerRect.height) * (designAreaRect.top - containerRect.top + parseInt(state.designPositionY));
-                    const designWidth = (canvas.width / containerRect.width) * designAreaRect.width * scale;
-                    const designHeight = (canvas.height / containerRect.height) * designAreaRect.height * scale;
-                    
-                    // Draw design on canvas
-                    ctx.drawImage(designImg, designX, designY, designWidth, designHeight);
-                    
-                    // Convert canvas to image
-                    const imgData = canvas.toDataURL('image/png');
-                    
-                    // Create download link
-                    const link = document.createElement('a');
-                    link.download = `tshirt-design-${state.color}-${state.size}.png`;
-                    link.href = imgData;
-                    
-                    // Trigger download
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    // Clean up
-                    DOMURL.revokeObjectURL(svgUrl);
-                };
-                
-                tshirtImg.src = svgUrl;
-            };
-            
-            designImg.src = state.uploadedDesign;
-        }
-        
-        // Search functionality
-        const searchToggle = document.getElementById('searchToggle');
-        const searchPopup = document.getElementById('searchPopup');
-        const searchInput = document.getElementById('searchInput');
-        
-        if (searchToggle && searchPopup) {
+
+            // Search functionality
+            const searchToggle = document.getElementById('searchToggle');
+            const searchPopup = document.getElementById('searchPopup');
+            const searchInput = document.getElementById('searchInput');
+
             searchToggle.addEventListener('click', function() {
                 searchPopup.classList.toggle('active');
                 if (searchPopup.classList.contains('active')) {
                     searchInput.focus();
                 }
             });
-            
+
             // Close search popup when clicking outside
             document.addEventListener('click', function(event) {
-                if (!event.target.closest('.search-container')) {
+                if (!event.target.closest('.search-container') && searchPopup.classList.contains('active')) {
                     searchPopup.classList.remove('active');
                 }
             });
-        }
-        
-        // Form submission handling for the inquiry form
-        const inquiryForm = document.getElementById('inquiryForm');
-        if (inquiryForm) {
+
+            // T-shirt designer functionality
+            const designUpload = document.getElementById('design-upload');
+            const designLarge = document.getElementById('design-large');
+            const designSmall = document.getElementById('design-small');
+            const fileNameDisplay = document.getElementById('file-name');
+            const previewButton = document.getElementById('preview-button');
+            const downloadButton = document.getElementById('download-button');
+            const designControls = document.getElementById('design-controls');
+            const sizeControl = document.getElementById('size-control');
+            const positionYControl = document.getElementById('position-y-control');
+            const sizeValue = document.getElementById('size-value');
+            const positionYValue = document.getElementById('position-y-value');
+            const tshirtBodyLarge = document.getElementById('tshirt-body-large');
+            const tshirtBodySmall = document.getElementById('tshirt-body-small');
+            const processingCanvas = document.getElementById('processing-canvas');
+            const ctx = processingCanvas.getContext('2d');
+            
+            // Variables to store design state
+            let designImage = null;
+            let currentColor = 'white';
+            let currentSize = 'M';
+            let designScale = 100;
+            let designPositionY = 0;
+            let hasUploadedDesign = false;
+
+            // Update T-shirt color
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    
+                    // Update T-shirt color
+                    currentColor = option.getAttribute('data-color');
+                    tshirtBodyLarge.setAttribute('fill', currentColor);
+                    tshirtBodySmall.setAttribute('fill', currentColor);
+                });
+            });
+
+            // Update T-shirt size
+            document.querySelectorAll('.size-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    
+                    // Update T-shirt size
+                    currentSize = option.getAttribute('data-size');
+                });
+            });
+
+            // Handle file upload
+            designUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    fileNameDisplay.textContent = file.name;
+                    
+                    // Read the uploaded file
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Store the image for preview
+                        designImage = new Image();
+                        designImage.onload = function() {
+                            hasUploadedDesign = true;
+                        };
+                        designImage.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Preview button functionality
+            previewButton.addEventListener('click', function() {
+                if (designImage) {
+                    // Remove placeholder
+                    designLarge.innerHTML = '';
+                    designSmall.innerHTML = '';
+                    
+                    // Create img elements
+                    const imgLarge = document.createElement('img');
+                    imgLarge.src = designImage.src;
+                    imgLarge.style.maxWidth = '100%';
+                    imgLarge.style.maxHeight = '100%';
+                    designLarge.appendChild(imgLarge);
+                    
+                    const imgSmall = document.createElement('img');
+                    imgSmall.src = designImage.src;
+                    imgSmall.style.maxWidth = '100%';
+                    imgSmall.style.maxHeight = '100%';
+                    designSmall.appendChild(imgSmall);
+                    
+                    // Show design controls
+                    designControls.style.display = 'block';
+                    
+                    // Apply initial styles
+                    updateDesignStyles();
+                } else {
+                    alert('Please upload an image first.');
+                }
+            });
+
+            // Update design styles based on control values
+            function updateDesignStyles() {
+                // Skip if no design is loaded
+                if (!hasUploadedDesign) return;
+                
+                const scalePercent = parseInt(sizeControl.value) / 100;
+                const yOffset = parseInt(positionYControl.value);
+                
+                // Update value displays
+                sizeValue.textContent = sizeControl.value;
+                positionYValue.textContent = positionYControl.value;
+                
+                // Apply to large preview
+                const imgLarge = designLarge.querySelector('img');
+                if (imgLarge) {
+                    imgLarge.style.transform = `scale(${scalePercent}) translateY(${yOffset}px)`;
+                }
+                
+                // Apply to small preview
+                const imgSmall = designSmall.querySelector('img');
+                if (imgSmall) {
+                    imgSmall.style.transform = `scale(${scalePercent}) translateY(${yOffset}px)`;
+                }
+                
+                // Store current values
+                designScale = parseInt(sizeControl.value);
+                designPositionY = yOffset;
+            }
+
+            // Add event listeners for design controls
+            sizeControl.addEventListener('input', updateDesignStyles);
+            positionYControl.addEventListener('input', updateDesignStyles);
+
+            // Download button functionality
+            downloadButton.addEventListener('click', function() {
+                if (!hasUploadedDesign) {
+                    alert('Please upload and preview a design first.');
+                    return;
+                }
+                
+                // Set canvas dimensions
+                processingCanvas.width = 800;
+                processingCanvas.height = 1000;
+                
+                // Draw t-shirt background
+                ctx.fillStyle = currentColor;
+                ctx.beginPath();
+                ctx.moveTo(120, 80);
+                ctx.lineTo(240, 20);
+                ctx.lineTo(560, 20);
+                ctx.lineTo(680, 80);
+                ctx.lineTo(760, 220);
+                ctx.lineTo(680, 280);
+                ctx.lineTo(680, 800);
+                ctx.lineTo(120, 800);
+                ctx.lineTo(120, 280);
+                ctx.lineTo(40, 220);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Draw collar
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(240, 20);
+                ctx.lineTo(400, 100);
+                ctx.lineTo(560, 20);
+                ctx.stroke();
+                
+                // Calculate design position and size
+                const scalePercent = designScale / 100;
+                const designWidth = designImage.width * scalePercent;
+                const designHeight = designImage.height * scalePercent;
+                const designX = (processingCanvas.width - designWidth) / 2;
+                const designY = 160 + designPositionY;
+                
+                // Draw the design
+                ctx.drawImage(
+                    designImage, 
+                    designX, 
+                    designY, 
+                    designWidth, 
+                    designHeight
+                );
+                
+                // Convert canvas to image and download
+                const downloadLink = document.createElement('a');
+                downloadLink.href = processingCanvas.toDataURL('image/png');
+                downloadLink.download = 'metro-district-tshirt-design.png';
+                downloadLink.click();
+            });
+
+            // Handle inquiry form submission
+            const inquiryForm = document.getElementById('inquiryForm');
+            
             inquiryForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+                
+                // Check if user is logged in
+                if (!isLoggedIn) {
+                    loginModal.style.display = 'flex';
+                    return;
+                }
                 
                 // Get form data
                 const formData = {
@@ -975,13 +1061,19 @@
                     timeline: document.getElementById('timeline').value
                 };
                 
-                // Here you would typically send the data to a server
-                // For demo purposes, we'll just show an alert
-                alert('Thank you for your inquiry! We will contact you soon.');
+                // In a real application, you would send this data to a server
+                console.log('Form submitted:', formData);
+                
+                // Show success message
+                alert('Your design inquiry has been submitted! We will contact you shortly.');
+                
+                // Reset form
                 inquiryForm.reset();
+                
+                // Switch to design tab
+                document.querySelector('.custom-tab[data-tab="design-tab"]').click();
             });
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
