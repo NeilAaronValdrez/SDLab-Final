@@ -434,7 +434,7 @@
                         <a class="nav-link" href="Products.php">PRODUCTS</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="Commissioned.php">INQUIRY</a>
+                        <a class="nav-link active" href="Inquiry.php">INQUIRY</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
