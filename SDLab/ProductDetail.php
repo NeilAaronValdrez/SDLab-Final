@@ -321,8 +321,7 @@ $relatedProducts = array(
                     <div class="product-thumbnails">
                         <img src="/api/placeholder/500/400" alt="Front View" class="product-thumbnail active" onclick="changeImage(this, '/api/placeholder/500/400')">
                         <img src="/api/placeholder/500/400?2" alt="Back View" class="product-thumbnail" onclick="changeImage(this, '/api/placeholder/500/400?2')">
-                        <img src="/api/placeholder/500/400?3" alt="Side View" class="product-thumbnail" onclick="changeImage(this, '/api/placeholder/500/400?3')">
-                        <img src="/api/placeholder/500/400?4" alt="Detail View" class="product-thumbnail" onclick="changeImage(this, '/api/placeholder/500/400?4')">
+                        <img src="/api/placeholder/500/400?design" alt="Design View" class="product-thumbnail" onclick="changeImage(this, '/api/placeholder/500/400?design')">
                     </div>
                 </div>
                 
