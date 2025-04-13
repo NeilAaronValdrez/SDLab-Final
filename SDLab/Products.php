@@ -8,14 +8,30 @@
 // $result = mysqli_query($connection, $query);
 // $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-// For now, using static array
+// For now, using static array with 16 additional premade products
 $products = [
     ["name" => "Urban Metro Tee", "price" => "25.99", "badge" => "NEW", "category" => "premade"],
     ["name" => "District Line Hoodie", "price" => "35.99", "badge" => "", "category" => "premade"],
     ["name" => "City Skyline Tee", "price" => "22.99", "badge" => "SALE", "category" => "premade"],
     ["name" => "Downtown Cap", "price" => "19.99", "badge" => "", "category" => "premade"],
     ["name" => "Metro Station Backpack", "price" => "45.99", "badge" => "POPULAR", "category" => "premade"],
-    ["name" => "Urban District Socks", "price" => "12.99", "badge" => "", "category" => "premade"]
+    ["name" => "Urban District Socks", "price" => "12.99", "badge" => "", "category" => "premade"],
+    ["name" => "Subway Map Hoodie", "price" => "39.99", "badge" => "NEW", "category" => "premade"],
+    ["name" => "Cityscape Tank Top", "price" => "21.99", "badge" => "", "category" => "premade"],
+    ["name" => "Underground Sweatshirt", "price" => "34.99", "badge" => "SALE", "category" => "premade"],
+    ["name" => "Urban Graffiti Tee", "price" => "24.99", "badge" => "", "category" => "premade"],
+    ["name" => "Night Skyline Jacket", "price" => "59.99", "badge" => "POPULAR", "category" => "premade"],
+    ["name" => "Metro Token Beanie", "price" => "18.99", "badge" => "", "category" => "premade"],
+    ["name" => "City Lights Scarf", "price" => "19.99", "badge" => "NEW", "category" => "premade"],
+    ["name" => "Street Art Snapback", "price" => "22.99", "badge" => "", "category" => "premade"],
+    ["name" => "Downtown Denim Jacket", "price" => "64.99", "badge" => "SALE", "category" => "premade"],
+    ["name" => "Urban Commuter Bag", "price" => "42.99", "badge" => "", "category" => "premade"],
+    ["name" => "City Block Long Sleeve", "price" => "29.99", "badge" => "POPULAR", "category" => "premade"],
+    ["name" => "Transit Map Tote Bag", "price" => "15.99", "badge" => "", "category" => "premade"],
+    ["name" => "Midnight District Pullover", "price" => "44.99", "badge" => "NEW", "category" => "premade"],
+    ["name" => "Skyscraper Zip Hoodie", "price" => "49.99", "badge" => "", "category" => "premade"],
+    ["name" => "Metro Line Track Pants", "price" => "37.99", "badge" => "SALE", "category" => "premade"],
+    ["name" => "Urban Crosswalk Crop Top", "price" => "23.99", "badge" => "", "category" => "premade"]
 ];
 
 // Commissioned design examples
@@ -362,7 +378,7 @@ $commissionedDesigns = [
     </div>
     
     <!-- Premade Designs Section -->
-    <div class="container py-4 product-section" id="premade-section">
+    <div class="container py-4 product-section" id="premade-section" style="display: none;">
         <div class="section-heading">
             <h2>PREMADE DESIGNS</h2>
             <hr>
@@ -426,7 +442,7 @@ $commissionedDesigns = [
     </div>
     
     <!-- Commissioned Designs Section -->
-    <div class="container py-4 product-section" id="commissioned-section">
+    <div class="container py-4 product-section" id="commissioned-section" style="display: none;">
         <div class="section-heading">
             <h2>COMMISSIONED DESIGNS</h2>
             <hr>
@@ -446,7 +462,7 @@ $commissionedDesigns = [
                     </ul>
                 </div>
                 <div class="col-md-4 d-flex align-items-center justify-content-center">
-                    <button class="request-commission-btn" onclick="location.href='Commission.php'">
+                    <button class="request-commission-btn" onclick="location.href='Inquiry.php'">
                         Request a Commission
                     </button>
                 </div>
@@ -501,7 +517,7 @@ $commissionedDesigns = [
                     <div class="product-info">
                         <h5><?php echo $designName; ?></h5>
                         <p>Starting at $<?php echo $price; ?></p>
-                        <button class="add-to-cart" onclick="event.stopPropagation(); window.location.href='Commission.php'">
+                        <button class="add-to-cart" onclick="event.stopPropagation(); window.location.href='Inquiry.php'">
                             <i class="bi bi-pencil-square"></i> Request Similar
                         </button>
                     </div>
@@ -513,9 +529,12 @@ $commissionedDesigns = [
         </div>
     </div>
     
-    <!-- All Products Section (initially hidden) -->
-    <div class="container py-4 product-section" id="all-section" style="display: none;">
-        <h2 class="mb-4">ALL PRODUCTS</h2>
+    <!-- All Products Section -->
+    <div class="container py-4 product-section" id="all-section">
+        <div class="section-heading">
+            <h2>ALL PRODUCTS</h2>
+            <hr>
+        </div>
         <div class="row">
             <?php
             // Combined products
@@ -568,7 +587,7 @@ $commissionedDesigns = [
                     <div class="product-info">
                         <h5><?php echo $productName; ?></h5>
                         <p><?php echo $isCommissioned ? 'Starting at ' : ''; ?>$<?php echo $price; ?></p>
-                        <button class="add-to-cart" onclick="event.stopPropagation(); <?php echo $isCommissioned ? "window.location.href='Commission.php'" : "addToCart($productId)"; ?>">
+                        <button class="add-to-cart" onclick="event.stopPropagation(); <?php echo $isCommissioned ? "window.location.href='Inquiry.php'" : "addToCart($productId)"; ?>">
                             <?php if($isCommissioned): ?>
                             <i class="bi bi-pencil-square"></i> Request Similar
                             <?php else: ?>
@@ -602,8 +621,8 @@ $commissionedDesigns = [
         const categoryButtons = document.querySelectorAll('.category-btn');
         const productSections = document.querySelectorAll('.product-section');
         
-        // Initially show only specific sections
-        showSection('premade'); // Show only premade designs by default
+        // Initially show all-section by default (fixing the issue)
+        showSection('all');
         
         categoryButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -646,7 +665,7 @@ $commissionedDesigns = [
                 // Check if this is a premade product or commissioned design
                 if(button.innerHTML.includes('Request Similar')) {
                     // Redirect to Commission page
-                    window.location.href = 'Commission.php';
+                    window.location.href = 'Inquiry.php';
                 } else {
                     // Redirect to the Cart page when Add to Cart is clicked
                     window.location.href = 'Cart.php';

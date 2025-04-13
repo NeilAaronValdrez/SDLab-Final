@@ -37,32 +37,8 @@
             margin: 0 10px;
         }
 
-        .navbar-nav.ms-auto {
-            margin-right: 0 !important;
-            align-items: center;
-        }
-
-        .nav-icons {
-            display: flex;
-            align-items: center;
-            color: white;
-        }
-
-        .nav-icons i {
-            cursor: pointer;
-            margin-left: 15px;
-        }
-
-        .cart-icon {
-            transition: color 0.3s ease;
-        }
-
-        .cart-icon:hover {
-            color: #aaa;
-        }
-
         .cart-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 50px auto;
             background-color: white;
             padding: 20px;
@@ -89,18 +65,34 @@
         .quantity-control {
             display: flex;
             align-items: center;
+            margin-top: 10px;
         }
 
         .quantity-btn {
             background-color: #f0f0f0;
             border: 1px solid #ddd;
-            padding: 5px 10px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .quantity-input {
+            width: 50px !important;
+            text-align: center;
+            margin: 0 5px;
         }
 
         .checkout-btn {
             width: 100%;
             background-color: #1E1E1E;
             color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
         
         .remove-btn {
@@ -109,19 +101,37 @@
             border: none;
             padding: 5px 10px;
             border-radius: 4px;
-            margin-top: 10px;
-            transition: background-color 0.3s;
+            cursor: pointer;
         }
         
-        .remove-btn:hover {
-            background-color: #bd2130;
+        .item-details {
+            flex-grow: 1;
         }
         
-        .item-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
+        .item-selection {
+            margin-right: 15px;
+        }
+        
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        /* Size and color styles */
+        .option-group {
+            margin-top: 5px;
+        }
+        
+        .option-label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .size-selector, .color-selector {
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -130,7 +140,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="Homepage.php">
-                <img src="/api/placeholder/40/40" class="rounded-circle">
+                <img src="/api/placeholder/30/30" class="rounded-circle" alt="Logo">
                 Metro District Designs
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,8 +158,11 @@
                         <a class="nav-link" href="Inquiry.php">INQUIRY</a>
                     </li>
                 </ul>
-                    <li class="nav-item nav-icons">
-                        <i class="bi bi-cart cart-icon" id="cartIcon"></i>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Cart.php">
+                            <i class="bi bi-cart"></i>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -160,22 +173,109 @@
     <div class="container">
         <div class="cart-container">
             <h2 class="mb-4">ORDERS</h2>
-            <div class="order-item">
-                <div class="order-item-image"></div>
-                <div class="flex-grow-1">
-                    <h5>Test Design</h5>
-                    <p>Price: ₱</p>
-                    <div class="item-controls">
-                        <div class="quantity-control">
-                            <button class="btn quantity-btn">-</button>
-                            <input type="text" class="form-control mx-2 text-center" value="1" style="width: 60px;">
-                            <button class="btn quantity-btn">+</button>
+            <div id="cart-items">
+                <!-- Item 1 -->
+                <div class="order-item">
+                    <div class="item-selection">
+                        <input class="form-check-input item-checkbox" type="checkbox" value="1" checked>
+                    </div>
+                    <div class="order-item-image"></div>
+                    <div class="item-details">
+                        <h5>Test Design</h5>
+                        <p>Price: ₱599</p>
+                        
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="option-group">
+                                <span class="option-label">Size:</span>
+                                <select class="size-selector" name="size">
+                                    <option value="S">Small</option>
+                                    <option value="M" selected>Medium</option>
+                                    <option value="L">Large</option>
+                                    <option value="XL">X-Large</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <span class="option-label">Color:</span>
+                                <select class="color-selector" name="color">
+                                    <option value="Black" selected>Black</option>
+                                    <option value="White">White</option>
+                                    <option value="Red">Red</option>
+                                    <option value="Blue">Blue</option>
+                                </select>
+                            </div>
                         </div>
-                        <button class="remove-btn" id="removeItem"><i class="bi bi-trash"></i> Remove</button>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="quantity-control">
+                                <button class="quantity-btn decrease-btn">-</button>
+                                <input type="text" class="form-control quantity-input" value="1" readonly>
+                                <button class="quantity-btn increase-btn">+</button>
+                            </div>
+                            <button class="remove-btn">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Item 2 -->
+                <div class="order-item">
+                    <div class="item-selection">
+                        <input class="form-check-input item-checkbox" type="checkbox" value="2">
+                    </div>
+                    <div class="order-item-image"></div>
+                    <div class="item-details">
+                        <h5>Custom Logo Design</h5>
+                        <p>Price: ₱899</p>
+                        
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="option-group">
+                                <span class="option-label">Size:</span>
+                                <select class="size-selector" name="size">
+                                    <option value="S">Small</option>
+                                    <option value="M">Medium</option>
+                                    <option value="L" selected>Large</option>
+                                    <option value="XL">X-Large</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <span class="option-label">Color:</span>
+                                <select class="color-selector" name="color">
+                                    <option value="Black">Black</option>
+                                    <option value="White">White</option>
+                                    <option value="Red" selected>Red</option>
+                                    <option value="Blue">Blue</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="quantity-control">
+                                <button class="quantity-btn decrease-btn">-</button>
+                                <input type="text" class="form-control quantity-input" value="1" readonly>
+                                <button class="quantity-btn increase-btn">+</button>
+                            </div>
+                            <button class="remove-btn">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <button class="btn checkout-btn mt-3">Check Out</button>
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAllItems">
+                    <label class="form-check-label" for="selectAllItems">
+                        Select All Items
+                    </label>
+                </div>
+                <div>
+                    <span class="fw-bold">Selected Items: <span id="selectedCount">1</span></span>
+                </div>
+            </div>
+            
+            <button class="checkout-btn">Check Out</button>
         </div>
     </div>
 
@@ -183,33 +283,111 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Cart icon navigation
-            const cartIcon = document.getElementById('cartIcon');
-            cartIcon.addEventListener('click', function() {
-                // Navigate to Cart.php when cart icon is clicked
-                window.location.href = 'Cart.php';
+            // Get elements
+            const cartItems = document.getElementById('cart-items');
+            const checkoutBtn = document.querySelector('.checkout-btn');
+            const selectAllCheckbox = document.getElementById('selectAllItems');
+            const selectedCountElement = document.getElementById('selectedCount');
+            
+            // Function to update selected count
+            function updateSelectedCount() {
+                const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+                selectedCountElement.textContent = checkedItems.length;
+                
+                // Determine if "Select All" should be checked
+                const totalItems = document.querySelectorAll('.item-checkbox').length;
+                selectAllCheckbox.checked = checkedItems.length === totalItems;
+            }
+            
+            // Initialize count
+            updateSelectedCount();
+            
+            // Handle quantity changes
+            cartItems.addEventListener('click', function(event) {
+                // Increase quantity
+                if (event.target.classList.contains('increase-btn')) {
+                    const quantityInput = event.target.previousElementSibling;
+                    let currentValue = parseInt(quantityInput.value);
+                    quantityInput.value = currentValue + 1;
+                }
+                
+                // Decrease quantity
+                if (event.target.classList.contains('decrease-btn')) {
+                    const quantityInput = event.target.nextElementSibling;
+                    let currentValue = parseInt(quantityInput.value);
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1;
+                    }
+                }
+                
+                // Remove item
+                if (event.target.classList.contains('remove-btn') || event.target.closest('.remove-btn')) {
+                    const orderItem = event.target.closest('.order-item');
+                    orderItem.remove();
+                    updateSelectedCount();
+                    
+                    // If cart is empty
+                    if (document.querySelectorAll('.order-item').length === 0) {
+                        const emptyMessage = document.createElement('div');
+                        emptyMessage.className = 'text-center py-4';
+                        emptyMessage.innerHTML = `
+                            <p>Your cart is empty</p>
+                            <a href="Products.php" class="btn btn-outline-dark">Continue Shopping</a>
+                        `;
+                        cartItems.appendChild(emptyMessage);
+                        
+                        // Hide select all option
+                        selectAllCheckbox.closest('.d-flex').style.display = 'none';
+                    }
+                }
             });
             
-            // Remove item functionality
-            const removeButton = document.getElementById('removeItem');
-            removeButton.addEventListener('click', function() {
-                // Here you would typically send an AJAX request to remove the item
-                // For now, just remove the element from the DOM
-                const orderItem = this.closest('.order-item');
-                orderItem.remove();
-                
-                // You might want to check if cart is empty and show a message
-                const orderItems = document.querySelectorAll('.order-item');
-                if (orderItems.length === 0) {
-                    const cartContainer = document.querySelector('.cart-container');
-                    const emptyMessage = document.createElement('p');
-                    emptyMessage.textContent = 'Your cart is empty';
-                    emptyMessage.className = 'text-center mt-4';
-                    cartContainer.insertBefore(emptyMessage, document.querySelector('.checkout-btn'));
-                    
-                    // Disable checkout button
-                    document.querySelector('.checkout-btn').disabled = true;
+            // Handle item checkboxes
+            cartItems.addEventListener('change', function(event) {
+                if (event.target.classList.contains('item-checkbox')) {
+                    updateSelectedCount();
                 }
+            });
+            
+            // Handle select all checkbox
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.item-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+                updateSelectedCount();
+            });
+            
+            // Handle checkout button
+            checkoutBtn.addEventListener('click', function() {
+                const selectedItems = document.querySelectorAll('.item-checkbox:checked');
+                
+                if (selectedItems.length === 0) {
+                    alert('Please select at least one item to check out.');
+                    return;
+                }
+                
+                // Collect data from selected items
+                const checkoutItems = [];
+                selectedItems.forEach(checkbox => {
+                    const item = checkbox.closest('.order-item');
+                    const title = item.querySelector('h5').textContent;
+                    const quantity = item.querySelector('.quantity-input').value;
+                    const size = item.querySelector('.size-selector').value;
+                    const color = item.querySelector('.color-selector').value;
+                    
+                    checkoutItems.push({
+                        title,
+                        quantity,
+                        size,
+                        color
+                    });
+                });
+                
+                console.log('Checking out items:', checkoutItems);
+                alert(`Proceeding to checkout with ${selectedItems.length} item(s).`);
+                // Here you would redirect to checkout page with the selected items
+                // window.location.href = 'Checkout.php';
             });
         });
     </script>
